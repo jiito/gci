@@ -1,20 +1,33 @@
+use core::iter::FilterMap;
+use git2::Branches;
 use git2::Repository;
 
 fn main() {
-    println!("Hello, world!");
+    let repo = open_curr_repo();
+
+    let branches = get_branches(&repo);
+
+    for tuple in branches {
+        println!("{}", tuple.0.name().unwrap().unwrap())
+    }
+}
+
+fn open_curr_repo() -> Repository {
     let repo = match Repository::open(".") {
         Ok(repo) => repo,
-        Err(e) => panic!("failed to open: {}", e)
+        Err(e) => panic!("failed to open: {}", e),
     };
 
+    return repo;
+}
 
+fn get_branches<'a>(repo: &'a Repository) -> Vec<(git2::Branch<'a>, git2::BranchType)> {
     let branches = match repo.branches(None) {
-        Ok(branches) => branches.filter_map(|x| x.ok()),
-        Err(e) => panic!("failed to get branches")
+        Ok(branches) => branches,
+        Err(e) => panic!("failed to get branches"),
     };
 
-    for branch in branches {
-        println!("{}", branch.0.name().unwrap().unwrap())
-    }
+    let branch_vec: Vec<_> = branches.filter_map(|b| b.ok()).collect();
 
+    branch_vec
 }
