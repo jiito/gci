@@ -13,12 +13,10 @@ fn main() {
 }
 
 fn open_curr_repo() -> Repository {
-    let repo = match Repository::open(".") {
+    match Repository::open(".") {
         Ok(repo) => repo,
         Err(e) => panic!("failed to open: {}", e),
-    };
-
-    return repo;
+    }
 }
 
 fn get_branches<'a>(repo: &'a Repository) -> Vec<(git2::Branch<'a>, git2::BranchType)> {
