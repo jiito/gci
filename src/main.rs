@@ -1,5 +1,3 @@
-use core::iter::FilterMap;
-use git2::Branches;
 use git2::Repository;
 
 fn main() {
@@ -19,13 +17,11 @@ fn open_curr_repo() -> Repository {
     }
 }
 
-fn get_branches<'a>(repo: &'a Repository) -> Vec<(git2::Branch<'a>, git2::BranchType)> {
+fn get_branches(repo: &Repository) -> Vec<(git2::Branch, git2::BranchType)> {
     let branches = match repo.branches(None) {
         Ok(branches) => branches,
         Err(e) => panic!("failed to get branches"),
     };
 
-    let branch_vec: Vec<_> = branches.filter_map(|b| b.ok()).collect();
-
-    branch_vec
+    branches.filter_map(|b| b.ok()).collect()
 }
