@@ -18,10 +18,8 @@ fn open_curr_repo() -> Repository {
 }
 
 fn get_branches(repo: &Repository) -> Vec<(git2::Branch, git2::BranchType)> {
-    let branches = match repo.branches(None) {
-        Ok(branches) => branches,
+    match repo.branches(None) {
+        Ok(branches) => branches.filter_map(|b| b.ok()).collect(),
         Err(e) => panic!("failed to get branches"),
-    };
-
-    branches.filter_map(|b| b.ok()).collect()
+    }
 }
