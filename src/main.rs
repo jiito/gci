@@ -1,4 +1,5 @@
 use git2::Repository;
+use inquire::MultiSelect;
 
 fn main() {
     let repo = open_curr_repo();
@@ -22,8 +23,22 @@ fn get_branches(repo: &Repository) -> Vec<(git2::Branch, git2::BranchType)> {
     }
 }
 
-fn pp_branches(branches: &Vec<(git2::Branch, git2::BranchType)>) {
-    for tuple in branches {
-        println!("{}", tuple.0.name().unwrap().unwrap())
+fn pp_branches(branches: &[(git2::Branch, git2::BranchType)]) {
+    let items = branches
+        .iter()
+        .map(|b| b.0.name().unwrap().unwrap())
+        .collect::<Vec<_>>();
+    let ans = MultiSelect::new("Git branches:", items).prompt();
+
+    match ans {
+        Ok(_) => println!("I'll get right on it"),
+        Err(_) => println!("The shopping list could not be processed"),
     }
+    // match selection {
+    //     Some(index) => println!("User selected item : {}", items[index]),
+    //     None => println!("User did not select anything"),
+    // }
+    // for tuple in branches {
+    //     println!("{}", tuple.0.name().unwrap().unwrap())
+    // }
 }
