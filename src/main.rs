@@ -1,5 +1,6 @@
 use git2::Repository;
-use inquire::MultiSelect;
+use inquire::error::InquireError;
+use inquire::Select;
 
 fn main() {
     let repo = open_curr_repo();
@@ -28,10 +29,10 @@ fn pp_branches(branches: &[(git2::Branch, git2::BranchType)]) {
         .iter()
         .map(|b| b.0.name().unwrap().unwrap())
         .collect::<Vec<_>>();
-    let ans = MultiSelect::new("Git branches:", items).prompt();
+    let ans: Result<&str, InquireError> = Select::new("Git branches:", items).prompt();
 
     match ans {
-        Ok(_) => println!("I'll get right on it"),
+        Ok(ans) => println!("{} will be checked-out", ans),
         Err(_) => println!("The shopping list could not be processed"),
     }
     // match selection {
