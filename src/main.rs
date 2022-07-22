@@ -31,19 +31,16 @@ fn pp_branches<'a>(branches: &'a [(git2::Branch, git2::BranchType)]) -> &'a str 
         .iter()
         .map(|b| b.0.name().unwrap().unwrap())
         .collect::<Vec<_>>();
-    let ans: Result<&str, InquireError> = Select::new("Git branches:", items).prompt();
+    let mut select: Select<&str> = Select::new("Git branches:", items);
+
+    select.vim_mode = true;
+
+    let ans: Result<&str, InquireError> = select.prompt();
 
     match ans {
         Ok(ans) => ans,
         Err(_) => panic!("The shopping list could not be processed"),
     }
-    // match selection {
-    //     Some(index) => println!("User selected item : {}", items[index]),
-    //     None => println!("User did not select anything"),
-    // }
-    // for tuple in branches {
-    //     println!("{}", tuple.0.name().unwrap().unwrap())
-    // }
 }
 
 fn checkout_branch(repo: &Repository, branch_name: &str) {
