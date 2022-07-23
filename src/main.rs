@@ -20,7 +20,7 @@ fn open_curr_repo() -> Repository {
 }
 
 fn get_branches(repo: &Repository) -> Vec<(git2::Branch, git2::BranchType)> {
-    match repo.branches(None) {
+    match repo.branches(Some(git2::BranchType::Local)) {
         Ok(branches) => branches.filter_map(|b| b.ok()).collect(),
         Err(_) => panic!("failed to get branches"),
     }
@@ -31,7 +31,7 @@ fn pp_branches<'a>(branches: &'a [(git2::Branch, git2::BranchType)]) -> &'a str 
         .iter()
         .map(|b| b.0.name().unwrap().unwrap())
         .collect::<Vec<_>>();
-    let mut select: Select<&str> = Select::new("Git branches:", items);
+    let mut select: Select<&str> = Select::new("Select a git branch:", items);
 
     select.vim_mode = true;
 
