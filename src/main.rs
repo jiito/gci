@@ -2,6 +2,8 @@ use git2::Repository;
 use inquire::error::InquireError;
 use inquire::Select;
 
+mod formatter;
+
 fn main() {
     let repo = open_curr_repo();
 
