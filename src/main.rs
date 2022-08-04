@@ -1,11 +1,25 @@
 use git2::Repository;
 use inquire::error::InquireError;
 use inquire::Select;
+use structopt::StructOpt;
+
+#[derive(Debug, StructOpt)]
+#[structopt(
+    name = "git-checkout-interactive-rust",
+    about = "A rust interactive git checkout CLI."
+)]
+struct Opt {
+    /// Filters remote branches
+    #[structopt(short = "r", long = "remote")]
+    remote: bool,
+}
 
 fn main() {
+    let args = Opt::from_args();
+
     let repo = open_curr_repo();
 
-    let branches = get_branches(&repo);
+    let branches = get_branches(&repo, args.remote);
 
     let branch = pp_branches(&branches);
 
@@ -19,8 +33,13 @@ fn open_curr_repo() -> Repository {
     }
 }
 
-fn get_branches(repo: &Repository) -> Vec<(git2::Branch, git2::BranchType)> {
-    match repo.branches(Some(git2::BranchType::Local)) {
+fn get_branches(repo: &Repository, remote_branch: bool) -> Vec<(git2::Branch, git2::BranchType)> {
+    let branch_type: git2::BranchType = if remote_branch {
+        git2::BranchType::Remote
+    } else {
+        git2::BranchType::Local
+    };
+    match repo.branches(Some(branch_type)) {
         Ok(branches) => branches.filter_map(|b| b.ok()).collect(),
         Err(_) => panic!("failed to get branches"),
     }
