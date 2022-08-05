@@ -19,7 +19,11 @@ fn main() {
 
     let repo = open_curr_repo();
 
-    let branches = get_branches(&repo, args.remote);
+    let branches = if args.remote {
+        get_branches_remote(&repo)
+    } else {
+        get_branches_local(&repo)
+    };
 
     let branch = pp_branches(&branches);
 
@@ -33,13 +37,15 @@ fn open_curr_repo() -> Repository {
     }
 }
 
-fn get_branches(repo: &Repository, remote_branch: bool) -> Vec<(git2::Branch, git2::BranchType)> {
-    let branch_type: git2::BranchType = if remote_branch {
-        git2::BranchType::Remote
-    } else {
-        git2::BranchType::Local
-    };
-    match repo.branches(Some(branch_type)) {
+fn get_branches_remote(repo: &Repository) -> Vec<(git2::Branch, git2::BranchType)> {
+    match repo.branches(Some(git2::BranchType::Remote)) {
+        Ok(branches) => branches.filter_map(|b| b.ok()).collect(),
+        Err(_) => panic!("failed to get branches"),
+    }
+}
+
+fn get_branches_local(repo: &Repository) -> Vec<(git2::Branch, git2::BranchType)> {
+    match repo.branches(Some(git2::BranchType::Local)) {
         Ok(branches) => branches.filter_map(|b| b.ok()).collect(),
         Err(_) => panic!("failed to get branches"),
     }
