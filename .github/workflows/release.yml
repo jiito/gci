@@ -30,3 +30,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: target/release/git-checkout-interactive-rust
+      - name: Publish Crate
+        run: cargo publish --token ${CARGO_REGISTRY_TOKEN}
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
