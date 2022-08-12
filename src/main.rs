@@ -1,3 +1,5 @@
+use std::process::exit;
+
 use git2::Repository;
 use inquire::error::InquireError;
 use inquire::Select;
@@ -64,7 +66,8 @@ fn pp_branches<'a>(branches: &'a [(git2::Branch, git2::BranchType)]) -> &'a str 
 
     match ans {
         Ok(ans) => ans,
-        Err(_) => panic!("The shopping list could not be processed"),
+        // gracefully shutdown
+        Err(_) => exit(0),
     }
 }
 
