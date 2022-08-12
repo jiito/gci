@@ -31,7 +31,7 @@ fn main() {
 }
 
 fn open_curr_repo() -> Repository {
-    match Repository::open(".") {
+    match Repository::discover(".") {
         Ok(repo) => repo,
         Err(e) => panic!("failed to open: {}", e),
     }
