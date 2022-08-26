@@ -3,21 +3,28 @@ use std::process::exit;
 use git2::Repository;
 use inquire::error::InquireError;
 use inquire::Select;
-use structopt::StructOpt;
 
-#[derive(Debug, StructOpt)]
-#[structopt(
-    name = "git-checkout-interactive-rust",
-    about = "A rust interactive git checkout CLI."
-)]
+#[derive(Debug)]
 struct Opt {
     /// Filters remote branches
-    #[structopt(short = "r", long = "remote")]
     remote: bool,
 }
 
+fn options() -> Opt {
+    use bpaf::*;
+    let remote = short('r')
+        .long("remote")
+        .help("Filters remote branches")
+        .switch();
+
+    construct!(Opt { remote })
+        .to_options()
+        .descr("A rust interactive git checkout CLI.")
+        .run()
+}
+
 fn main() {
-    let args = Opt::from_args();
+    let args = options();
 
     let repo = open_curr_repo();
 
